@@ -30,11 +30,11 @@
 {
     if (self = [super initWithDisplayView:displayView])
     {
-        self.backgroundViewColor = XBColor_clear;
+        self.backgroundViewColor = [UIColor clearColor];
         self.layer.cornerRadius = 3;
         self.fadeInFadeOut = YES;
         
-        self.layer.shadowColor = XBColor_gray_100_100_102.CGColor;
+        self.layer.shadowColor = [UIColor colorWithRed:100.0/255.0 green:100.0/255.0 blue:100.0/255.0 alpha:1].CGColor;
         self.layer.shadowOpacity = 0.5;
         self.layer.shadowRadius = 2;
         self.layer.shadowOffset = CGSizeMake(0, 0);
@@ -75,11 +75,11 @@
         
         btn.img_normal = self.arr_img[i];
         btn.size_image = CGSizeMake(GHeightFactorFun(20), GHeightFactorFun(20));
-        btn.f_spaceToContentSide = GWidthFactorFun(9);
-        btn.f_spaceOfImageAndTitle = GWidthFactorFun(6);
+        btn.f_spaceOfContentAndBorderForAlign = self.f_contentLeftSpaceToBorder;
+        btn.f_spaceOfImageAndTitle = self.f_spaceOfImageAndTitle;
         btn.font_title = UIFont(GWidthFactorFun(12));
-        btn.color_titleNormal = XBColor_black_51_51_51;
-        btn.enum_contentSide = XBBtnSideLeft;
+        btn.color_titleNormal = [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1];
+        btn.enum_contentAlign = XBBtnAlignLeft;
         btn.bl_click = ^(XBButton *weakBtn) {
             [weakSelf hidden];
             if (weakSelf.bl_click)
@@ -92,7 +92,7 @@
         //分割线
         UIView *line = [UIView new];
         [self addSubview:line];
-        line.backgroundColor = XBColor_gray_230_230_230;
+        line.backgroundColor = [UIColor colorWithRed:230/255.0 green:230/255.0 blue:230/255.0 alpha:1];
         [line mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(btn.mas_bottom);
             make.left.right.equalTo(self);
@@ -112,5 +112,20 @@
     };
 }
 
-
+- (CGFloat)f_contentLeftSpaceToBorder
+{
+    if (_f_contentLeftSpaceToBorder == 0)
+    {
+        return GWidthFactorFun(5);
+    }
+    return _f_contentLeftSpaceToBorder;
+}
+- (CGFloat)f_spaceOfImageAndTitle
+{
+    if (_f_spaceOfImageAndTitle == 0)
+    {
+        return GWidthFactorFun(5);
+    }
+    return _f_spaceOfImageAndTitle;
+}
 @end

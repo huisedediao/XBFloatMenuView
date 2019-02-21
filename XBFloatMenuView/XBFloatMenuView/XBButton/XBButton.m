@@ -11,11 +11,20 @@
 #import <objc/message.h>
 
 @interface XBButton ()
-@property (nonatomic,strong) UIImageView *imgv_background;
 @property (nonatomic,strong) UIView *v_content;
 @end
 
 @implementation XBButton
+
+- (void)layoutSubviews
+{
+    //解决没有设置宽高的时候无法显示的问题
+    if (self.frame.size.width == 0 || self.frame.size.height == 0)
+    {
+        self.frame = CGRectMake(0, 0, 1, 1);
+    }
+    [self setNeedsDisplay];
+}
 
 #pragma mark - 生命周期
 - (instancetype)initWithFrame:(CGRect)frame
@@ -23,7 +32,6 @@
     if (self = [super initWithFrame:frame])
     {
         [self initParams];
-        [self createSubviews];
     }
     return self;
 }
@@ -32,18 +40,217 @@
     if (self = [super initWithCoder:aDecoder])
     {
         [self initParams];
-        [self createSubviews];
     }
     return self;
 }
+
 - (void)drawRect:(CGRect)rect
 {
     [super drawRect:rect];
     
-    [self setContentViewSubviewsParams];
-    [self setContentViewSubviewsLayout];
-    [self setContentLayout];
+    [self setBackgroundImageIfNeed];
     
+    [self setTitleLabelContentIfNeed];
+    [self setImageIfNeed];
+    
+    if (_lb_title || _imgv_image)
+    {
+        [self clearContentViewLayout];
+        
+        if (_lb_title && _imgv_image)
+        {
+            [self setContentViewSubviewsLayout];
+        }
+        else if (_lb_title)
+        {
+            [self setLableLayoutForNonImage];
+        }
+        else if (_imgv_image)
+        {
+            [self setImageViewLayoutForNonTitle];
+        }
+        
+        [self setContentLayout];
+        [self setContentAdaptLayoutIfNeed];
+    }
+    
+    [self setHighLightOrSelectedBackgroundColorIfNeed:rect];
+}
+- (void)dealloc
+{
+    NSLog(@"%@销毁",NSStringFromClass([self class]));
+    unsigned int count;
+    Ivar *ivarList = class_copyIvarList([self class], &count);
+    for (int i = 0; i < count; i++)
+    {
+        NSString *keyPath = [NSString stringWithUTF8String:ivar_getName(ivarList[i])];
+        [self removeObserver:self forKeyPath:[keyPath substringFromIndex:1]];
+    }
+}
+
+#pragma mark - 初始化
+- (void)initParams
+{
+    self.b_adaptContent = YES;
+    self.layer.masksToBounds = YES;
+    [self addTarget:self action:@selector(selfClick) forControlEvents:UIControlEventTouchUpInside];
+    
+    unsigned int count;
+    Ivar *ivarList = class_copyIvarList([self class], &count);
+    for (int i = 0; i < count; i++)
+    {
+        NSString *keyPath = [NSString stringWithUTF8String:ivar_getName(ivarList[i])];
+        [self addObserver:self forKeyPath:[keyPath substringFromIndex:1] options:NSKeyValueObservingOptionNew context:nil];
+    }
+    self.backgroundColor = [UIColor clearColor];
+}
+
+#pragma mark - 观察者回调
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+{
+    [self setNeedsDisplay];
+    
+    if (_lb_title == nil)
+    {
+        if ([keyPath hasPrefix:@"str_"] || [keyPath hasPrefix:@"lb_"])
+        {
+            [self createTitleLabel];
+        }
+    }
+    
+    if (_imgv_image == nil)
+    {
+        if ([keyPath hasPrefix:@"img_"] || [keyPath hasPrefix:@"imgv_"])
+        {
+            [self createImageView];
+        }
+    }
+    
+}
+
+#pragma mark - 设置参数
+- (void)setTitleLabelContentIfNeed
+{
+    if ([self setAttributeStrIfNeed] == NO)
+    {
+        if ([self setTitleIfNeed])
+        {
+            [self setTitleNumberOfLinesIfNeed];
+            [self setTitleColorIfNeed];
+            [self setFontIfNeed];
+        }
+    }
+    else
+    {
+        [self setTitleNumberOfLinesIfNeed];
+    }
+}
+
+///返回：是否设置了富文本
+- (BOOL)setAttributeStrIfNeed
+{
+    if (self.isEnabled == NO)
+    {
+        if (self.str_titleAttributedDisabled)
+        {
+            self.lb_title.attributedText = self.str_titleAttributedDisabled;
+            return YES;
+        }
+    }
+    if (self.isHighlighted)
+    {
+        if (self.str_titleAttributedHighlighted)
+        {
+            self.lb_title.attributedText = self.str_titleAttributedHighlighted;
+            return YES;
+        }
+    }
+    if (self.isSelected)
+    {
+        if (self.str_titleAttributedSelected)
+        {
+            self.lb_title.attributedText = self.str_titleAttributedSelected;
+            return YES;
+        }
+    }
+    if (self.str_titleAttributedNormal)
+    {
+        self.lb_title.attributedText = self.str_titleAttributedNormal;
+        return YES;
+    }
+    return NO;
+}
+
+///返回：是否设置了title
+- (BOOL)setTitleIfNeed
+{
+    NSString *title = [self getTitle];
+    if (title.length)
+    {
+        self.lb_title.text = title;
+        return YES;
+    }
+    return NO;
+}
+
+- (void)setTitleColorIfNeed
+{
+    UIColor *titleColor = [self getTitleColor];
+    if (titleColor)
+    {
+        self.lb_title.textColor = titleColor;
+    }
+}
+
+- (void)setImageIfNeed
+{
+    UIImage *img_content = [self getImage];
+    if (img_content)
+    {
+        self.imgv_image.image = img_content;
+    }
+}
+
+- (void)setFontIfNeed
+{
+    UIFont *font = self.font_title;
+    if (font)
+    {
+        self.lb_title.font = font;
+    }
+}
+
+- (void)setTitleNumberOfLinesIfNeed
+{
+    if (self.b_multiLine)
+    {
+        self.lb_title.numberOfLines = 0;
+    }
+    else
+    {
+        self.lb_title.numberOfLines = 1;
+    }
+}
+
+- (void)setBackgroundImageIfNeed
+{
+    UIImage *img_background = [self getBackgroundImage];
+    if (img_background)
+    {
+        self.imgv_background.image = img_background;
+    }
+}
+
+- (void)setHighLightOrSelectedBackgroundColorIfNeed:(CGRect)rect
+{
+    if (self.isEnabled == NO)
+    {
+        if (self.color_backgroundDisabled)
+        {
+            [self.color_backgroundDisabled set];
+            UIRectFill(rect);
+        }
+    }
     if (self.isHighlighted)
     {
         if(self.color_backgroundHighlight)
@@ -61,101 +268,151 @@
         }
     }
 }
-- (void)dealloc
-{
-    NSLog(@"%@销毁",NSStringFromClass([self class]));
-    unsigned int count;
-    Ivar *ivarList = class_copyIvarList([self class], &count);
-    for (int i = 0; i < count; i++)
-    {
-        NSString *keyPath = [NSString stringWithUTF8String:ivar_getName(ivarList[i])];
-        [self removeObserver:self forKeyPath:[keyPath substringFromIndex:1]];
-    }
-}
-
-#pragma mark - 初始化
-- (void)initParams
-{
-    self.layer.masksToBounds = YES;
-    [self addTarget:self action:@selector(selfClick) forControlEvents:UIControlEventTouchUpInside];
-    
-    unsigned int count;
-    Ivar *ivarList = class_copyIvarList([self class], &count);
-    for (int i = 0; i < count; i++)
-    {
-        NSString *keyPath = [NSString stringWithUTF8String:ivar_getName(ivarList[i])];
-        [self addObserver:self forKeyPath:[keyPath substringFromIndex:1] options:NSKeyValueObservingOptionNew context:nil];
-    }
-    self.backgroundColor = [UIColor clearColor];
-}
-- (void)createSubviews
-{
-    self.imgv_background = [UIImageView new];
-    self.imgv_background.userInteractionEnabled = NO;
-    [self addSubview:self.imgv_background];
-    [self.imgv_background mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self);
-    }];
-    
-    self.v_content = [UIView new];
-    [self addSubview:self.v_content];
-    self.v_content.userInteractionEnabled = NO;
-
-    self.lb_title = [UILabel new];
-    [self.v_content addSubview:self.lb_title];
-
-    self.imgv_image = [UIImageView new];
-    [self.v_content addSubview:self.imgv_image];
-}
-
-#pragma mark - 观察者回调
--(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
-{
-    [self setNeedsDisplay];
-}
 
 
-#pragma mark - 设置参数
-- (void)setContentViewSubviewsParams
-{
-    if (self.str_title_attributed)
-    {
-        self.lb_title.attributedText = self.str_title_attributed;
-    }
-    else
-    {
-        self.lb_title.text = [self getTitle];
-        self.lb_title.textColor = [self getTitleColor];
-        self.lb_title.font = self.font_title;
-    }
-
-    self.imgv_image.image = [self getImage];
-    self.imgv_background.image = [self getBackgroundImage];
-}
-
-
-#pragma mark - 其他方法
+#pragma mark - 获取用于显示的属性
 - (UIImage *)getImage
 {
-    UIImage *image = self.isHighlighted ? self.img_highlight : (self.selected ? self.img_selected : self.img_normal);
-    return image ? image : self.img_normal;
+    if (self.isEnabled == NO)
+    {
+        if (self.img_disabled)
+        {
+            return self.img_disabled;
+        }
+    }
+    if (self.isHighlighted)
+    {
+        if (self.img_highlighted)
+        {
+            return self.img_highlighted;
+        }
+    }
+    if (self.isSelected)
+    {
+        if (self.img_selected)
+        {
+            return self.img_selected;
+        }
+    }
+    return self.img_normal;
 }
 - (NSString *)getTitle
 {
-    NSString *title = self.isHighlighted ? self.str_titleHighlight : (self.selected ? self.str_titleSelected : self.str_titleNormal);
-    return title ? title : self.str_titleNormal;
+    if (self.isEnabled == NO)
+    {
+        if (self.str_titleDisabled)
+        {
+            return self.str_titleDisabled;
+        }
+    }
+    if (self.isHighlighted)
+    {
+        if (self.str_titleHighlighted)
+        {
+            return self.str_titleHighlighted;
+        }
+    }
+    if (self.isSelected)
+    {
+        if (self.str_titleSelected)
+        {
+            return self.str_titleSelected;
+        }
+    }
+    return self.str_titleNormal;
 }
 - (UIColor *)getTitleColor
 {
-    UIColor *color = self.isHighlighted ? self.color_titleHighlight : (self.selected ? self.color_titleSelected : self.color_titleNormal);
-    return color ? color : self.color_titleNormal;
+    if (self.isEnabled == NO)
+    {
+        if (self.color_titleDisabled)
+        {
+            return self.color_titleDisabled;
+        }
+    }
+    if (self.isHighlighted)
+    {
+        if (self.color_titleHighlighted)
+        {
+            return self.color_titleHighlighted;
+        }
+    }
+    if (self.isSelected)
+    {
+        if (self.color_titleSelected)
+        {
+            return self.color_titleSelected;
+        }
+    }
+    return self.color_titleNormal;
 }
 - (UIImage *)getBackgroundImage
 {
-    UIImage *image = self.isHighlighted ? self.img_backgroundHighlight : (self.selected ? self.img_backgroundSelected : self.img_backgroundNormal);
-    return image ? image : self.img_backgroundNormal;
+    if (self.isEnabled == NO)
+    {
+        if (self.img_backgroundDisabled)
+        {
+            return self.img_backgroundDisabled;
+        }
+    }
+    if (self.isHighlighted)
+    {
+        if (self.img_backgroundHighlighted)
+        {
+            return self.img_backgroundHighlighted;
+        }
+    }
+    if (self.isSelected)
+    {
+        if (self.img_backgroundSelected)
+        {
+            return self.img_backgroundSelected;
+        }
+    }
+    return self.img_backgroundNormal;
 }
 
+- (CGSize)getImageSize
+{
+    CGSize imageSize = CGSizeZero;
+    if (CGSizeEqualToSize(self.size_image, CGSizeZero) == false)
+    {
+        if ([self getImage])
+        {
+            imageSize = self.size_image;
+        }
+    }
+    else
+    {
+        imageSize = [self getImage].size;
+    }
+    if (self.b_keepImageScale)
+    {
+        CGFloat width = imageSize.width;
+        CGFloat height = imageSize.height;
+        CGFloat maxHeight = self.bounds.size.height;
+        CGFloat maxWidth = self.bounds.size.width;
+        //如果图片尺寸大于view尺寸，按比例缩放
+        if(width > maxWidth || height > width)
+        {
+            CGFloat ratio = height / width;
+            CGFloat maxRatio = maxHeight / maxWidth;
+            if(ratio < maxRatio)
+            {
+                width = maxWidth;
+                height = width*ratio;
+            }
+            else
+            {
+                height = maxHeight;
+                width = height / ratio;
+            }
+        }
+        imageSize.height = height;
+        imageSize.width = width;
+    }
+    return imageSize;
+}
 
 #pragma mark - 方法重写
 - (void)setHighlighted:(BOOL)highlighted
@@ -205,6 +462,23 @@
 }
 
 #pragma mark - 布局
+- (void)setLableLayoutForNonImage
+{
+    [self.lb_title mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.top.greaterThanOrEqualTo(self.v_content);
+        make.right.bottom.lessThanOrEqualTo(self.v_content);
+        make.center.equalTo(self.v_content);
+    }];
+}
+- (void)setImageViewLayoutForNonTitle
+{
+    [self.imgv_image mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.size.mas_equalTo([self getImageSize]);
+        make.center.equalTo(self.v_content);
+        make.left.top.greaterThanOrEqualTo(self.v_content);
+        make.right.bottom.lessThanOrEqualTo(self.v_content);
+    }];
+}
 
 - (void)setContentViewSubviewsLayout
 {
@@ -214,20 +488,9 @@
     [self.lb_title mas_remakeConstraints:^(MASConstraintMaker *make) {
         
     }];
-    CGSize imageSize = CGSizeZero;
-    if (CGSizeEqualToSize(self.size_image, CGSizeZero) == false)
-    {
-        if ([self getImage])
-        {
-            imageSize = self.size_image;
-        }
-    }
-    else
-    {
-        imageSize = [self getImage].size;
-    }
+    
     [self.imgv_image mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(imageSize);
+        make.size.mas_equalTo([self getImageSize]);
     }];
     
     switch (self.enum_contentType)
@@ -257,46 +520,52 @@
             break;
     }
 }
+- (void)clearContentViewLayout
+{
+    [self.v_content mas_remakeConstraints:^(MASConstraintMaker *make) {
+        
+    }];
+}
 - (void)setContentLayout
 {
-    switch (self.enum_contentSide)
+    switch (self.enum_contentAlign)
     {
-        case XBBtnSideCenter:
+        case XBBtnAlignCenter:
         {
             [self.v_content mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.center.equalTo(self);
             }];
         }
             break;
-        case XBBtnSideLeft:
+        case XBBtnAlignLeft:
         {
             [self.v_content mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.centerY.equalTo(self);
-                make.left.equalTo(self).offset(self.f_spaceToContentSide);
+                make.left.equalTo(self).offset(self.f_spaceOfContentAndBorderForAlign);
             }];
         }
             break;
-        case XBBtnSideRight:
+        case XBBtnAlignRight:
         {
             [self.v_content mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.centerY.equalTo(self);
-                make.right.equalTo(self).offset(- self.f_spaceToContentSide);
+                make.right.equalTo(self).offset(- self.f_spaceOfContentAndBorderForAlign);
             }];
         }
             break;
-        case XBBtnSideTop:
+        case XBBtnAlignTop:
         {
             [self.v_content mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.centerX.equalTo(self);
-                make.top.equalTo(self).offset(self.f_spaceToContentSide);
+                make.top.equalTo(self).offset(self.f_spaceOfContentAndBorderForAlign);
             }];
         }
             break;
-        case XBBtnSideBottom:
+        case XBBtnAlignBottom:
         {
             [self.v_content mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.centerX.equalTo(self);
-                make.bottom.equalTo(self).offset(- self.f_spaceToContentSide);
+                make.bottom.equalTo(self).offset(- self.f_spaceOfContentAndBorderForAlign);
             }];
         }
             break;
@@ -304,15 +573,21 @@
         default:
             break;
     }
-    
-    CGFloat offset_v_content = 0;
-    if (self.enum_contentType == XBBtnTypeImageLeft || self.enum_contentType == XBBtnTypeImageRight)
+}
+- (void)setContentAdaptLayoutIfNeed
+{
+    if (self.b_adaptContent)
     {
-        offset_v_content = self.f_spaceToContentSide;
+        if (self.enum_contentAlign == XBBtnAlignCenter)
+        {
+            [self.v_content mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.left.greaterThanOrEqualTo(self).offset(self.f_spaceOfContentAndBorderForAdapt);
+                make.right.lessThanOrEqualTo(self).offset(- self.f_spaceOfContentAndBorderForAdapt);
+                make.top.greaterThanOrEqualTo(self).offset(self.f_spaceOfContentAndBorderForAdapt);
+                make.bottom.lessThanOrEqualTo(self).offset(- self.f_spaceOfContentAndBorderForAdapt);
+            }];
+        }
     }
-    [self.v_content mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.width.lessThanOrEqualTo(self).offset(- offset_v_content).priority(1000);
-    }];
 }
 - (void)contentSubviewsLayoutForType_left
 {
@@ -325,6 +600,10 @@
     [self.lb_title mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.v_content);
         make.left.equalTo(self.imgv_image.mas_right).offset(self.f_spaceOfImageAndTitle);
+        if (self.f_titleMaxWidth != 0)
+        {
+            make.width.mas_lessThanOrEqualTo(self.f_titleMaxWidth);
+        }
         make.top.greaterThanOrEqualTo(self.v_content);
         make.bottom.lessThanOrEqualTo(self.v_content);
         make.right.lessThanOrEqualTo(self.v_content);
@@ -341,6 +620,10 @@
     [self.imgv_image mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.v_content);
         make.left.equalTo(self.lb_title.mas_right).offset(self.f_spaceOfImageAndTitle);
+        if (self.f_titleMaxWidth != 0)
+        {
+            make.width.mas_lessThanOrEqualTo(self.f_titleMaxWidth);
+        }
         make.top.greaterThanOrEqualTo(self.v_content);
         make.bottom.lessThanOrEqualTo(self.v_content);
         make.right.lessThanOrEqualTo(self.v_content);
@@ -357,6 +640,10 @@
     [self.lb_title mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(self.v_content);
         make.top.equalTo(self.imgv_image.mas_bottom).offset(self.f_spaceOfImageAndTitle);
+        if (self.f_titleMaxWidth != 0)
+        {
+            make.width.mas_lessThanOrEqualTo(self.f_titleMaxWidth);
+        }
         make.left.greaterThanOrEqualTo(self.v_content);
         make.right.lessThanOrEqualTo(self.v_content);
         make.bottom.lessThanOrEqualTo(self.v_content);
@@ -373,9 +660,66 @@
     [self.lb_title mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(self.v_content);
         make.bottom.equalTo(self.imgv_image.mas_top).offset(- self.f_spaceOfImageAndTitle);
+        if (self.f_titleMaxWidth != 0)
+        {
+            make.width.mas_lessThanOrEqualTo(self.f_titleMaxWidth);
+        }
         make.left.greaterThanOrEqualTo(self.v_content);
         make.right.lessThanOrEqualTo(self.v_content);
         make.top.greaterThanOrEqualTo(self.v_content);
     }];
 }
+
+
+#pragma mark - 懒加载
+- (UIImageView *)imgv_background
+{
+    if (_imgv_background == nil)
+    {
+        _imgv_background = [UIImageView new];
+        _imgv_background.userInteractionEnabled = NO;
+        [self addSubview:_imgv_background];
+        [_imgv_background mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(self);
+        }];
+    }
+    return _imgv_background;
+}
+- (UIView *)v_content
+{
+    if (_v_content == nil)
+    {
+        _v_content = [UIView new];
+        [self addSubview:_v_content];
+        _v_content.userInteractionEnabled = NO;
+    }
+    return _v_content;
+}
+- (UILabel *)lb_title
+{
+    if (_lb_title == nil)
+    {
+        [self createTitleLabel];
+    }
+    return _lb_title;
+}
+- (UIImageView *)imgv_image
+{
+    if (_imgv_image == nil)
+    {
+        [self createImageView];
+    }
+    return _imgv_image;
+}
+- (void)createTitleLabel
+{
+    _lb_title = [UILabel new];
+    [self.v_content addSubview:_lb_title];
+}
+- (void)createImageView
+{
+    _imgv_image = [UIImageView new];
+    [self.v_content addSubview:_imgv_image];
+}
 @end
+

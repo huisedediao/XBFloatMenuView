@@ -11,8 +11,6 @@
 
 
 #import "UIView+FrameLayout.h"
-#import "XBDefine.h"
-#import "Header_Color.h"
 #import "XBButton.h"
 #import "Masonry.h"
 

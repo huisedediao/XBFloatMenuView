@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F1041274221E6E3000733753 /* XBFloatMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = F1041273221E6E3000733753 /* XBFloatMenuView.m */; };
+		F1041277221E6E6100733753 /* XBButton+CompatibleUIButton.m in Sources */ = {isa = PBXBuildFile; fileRef = F1041275221E6E6100733753 /* XBButton+CompatibleUIButton.m */; };
 		F18C8D8E2119406900C980B8 /* XBAlertViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = F18C8D892119406900C980B8 /* XBAlertViewBase.m */; };
 		F18C8D8F2119406900C980B8 /* XBAlertViewBase+Queue.m in Sources */ = {isa = PBXBuildFile; fileRef = F18C8D8A2119406900C980B8 /* XBAlertViewBase+Queue.m */; };
 		F18C8D902119406900C980B8 /* XBAlertViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F18C8D8B2119406900C980B8 /* XBAlertViewManager.m */; };
@@ -18,7 +20,6 @@
 		F1F84087211939ED0005C272 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F1F84086211939ED0005C272 /* main.m */; };
 		F1F84091211939ED0005C272 /* XBFloatMenuViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F1F84090211939ED0005C272 /* XBFloatMenuViewTests.m */; };
 		F1F8409C211939ED0005C272 /* XBFloatMenuViewUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F1F8409B211939ED0005C272 /* XBFloatMenuViewUITests.m */; };
-		F1F840AC21193A240005C272 /* XBFloatMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = F1F840AB21193A240005C272 /* XBFloatMenuView.m */; };
 		F1F840BA21193A630005C272 /* UIView+FrameLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = F1F840B921193A630005C272 /* UIView+FrameLayout.m */; };
 		F1F840BE21193A820005C272 /* UIView+AdaptKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F1F840BC21193A820005C272 /* UIView+AdaptKeyboard.m */; };
 		F1F840C121193AA20005C272 /* UIView+Animation.m in Sources */ = {isa = PBXBuildFile; fileRef = F1F840BF21193AA10005C272 /* UIView+Animation.m */; };
@@ -55,6 +56,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F1041271221E6E3000733753 /* XBFloatMenuView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XBFloatMenuView.h; sourceTree = "<group>"; };
+		F1041272221E6E3000733753 /* XBFloatMenuViewHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XBFloatMenuViewHeader.h; sourceTree = "<group>"; };
+		F1041273221E6E3000733753 /* XBFloatMenuView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XBFloatMenuView.m; sourceTree = "<group>"; };
+		F1041275221E6E6100733753 /* XBButton+CompatibleUIButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XBButton+CompatibleUIButton.m"; sourceTree = "<group>"; };
+		F1041276221E6E6100733753 /* XBButton+CompatibleUIButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XBButton+CompatibleUIButton.h"; sourceTree = "<group>"; };
 		F18C8D882119406900C980B8 /* XBAlertViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XBAlertViewManager.h; sourceTree = "<group>"; };
 		F18C8D892119406900C980B8 /* XBAlertViewBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XBAlertViewBase.m; sourceTree = "<group>"; };
 		F18C8D8A2119406900C980B8 /* XBAlertViewBase+Queue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XBAlertViewBase+Queue.m"; sourceTree = "<group>"; };
@@ -77,8 +83,6 @@
 		F1F84097211939ED0005C272 /* XBFloatMenuViewUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XBFloatMenuViewUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1F8409B211939ED0005C272 /* XBFloatMenuViewUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XBFloatMenuViewUITests.m; sourceTree = "<group>"; };
 		F1F8409D211939ED0005C272 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F1F840AA21193A240005C272 /* XBFloatMenuView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XBFloatMenuView.h; sourceTree = "<group>"; };
-		F1F840AB21193A240005C272 /* XBFloatMenuView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XBFloatMenuView.m; sourceTree = "<group>"; };
 		F1F840B821193A630005C272 /* UIView+FrameLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+FrameLayout.h"; sourceTree = "<group>"; };
 		F1F840B921193A630005C272 /* UIView+FrameLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FrameLayout.m"; sourceTree = "<group>"; };
 		F1F840BC21193A820005C272 /* UIView+AdaptKeyboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+AdaptKeyboard.m"; sourceTree = "<group>"; };
@@ -86,7 +90,6 @@
 		F1F840BF21193AA10005C272 /* UIView+Animation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Animation.m"; sourceTree = "<group>"; };
 		F1F840C021193AA20005C272 /* UIView+Animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Animation.h"; sourceTree = "<group>"; };
 		F1F840C321193AE80005C272 /* XBDefine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XBDefine.h; sourceTree = "<group>"; };
-		F1F840C821193B430005C272 /* XBFloatMenuViewHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XBFloatMenuViewHeader.h; sourceTree = "<group>"; };
 		F1F840CA21193B740005C272 /* XBButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XBButton.m; sourceTree = "<group>"; };
 		F1F840CB21193B740005C272 /* XBButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XBButton.h; sourceTree = "<group>"; };
 		F1F840CE21193B800005C272 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -220,9 +223,9 @@
 		F1F840A921193A1C0005C272 /* XBFloatMenuView */ = {
 			isa = PBXGroup;
 			children = (
-				F1F840AA21193A240005C272 /* XBFloatMenuView.h */,
-				F1F840AB21193A240005C272 /* XBFloatMenuView.m */,
-				F1F840C821193B430005C272 /* XBFloatMenuViewHeader.h */,
+				F1041271221E6E3000733753 /* XBFloatMenuView.h */,
+				F1041273221E6E3000733753 /* XBFloatMenuView.m */,
+				F1041272221E6E3000733753 /* XBFloatMenuViewHeader.h */,
 			);
 			path = XBFloatMenuView;
 			sourceTree = "<group>";
@@ -252,6 +255,8 @@
 		F1F840C921193B740005C272 /* XBButton */ = {
 			isa = PBXGroup;
 			children = (
+				F1041276221E6E6100733753 /* XBButton+CompatibleUIButton.h */,
+				F1041275221E6E6100733753 /* XBButton+CompatibleUIButton.m */,
 				F1F840CA21193B740005C272 /* XBButton.m */,
 				F1F840CB21193B740005C272 /* XBButton.h */,
 			);
@@ -436,7 +441,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F1F840F221193B810005C272 /* MASConstraint.m in Sources */,
-				F1F840AC21193A240005C272 /* XBFloatMenuView.m in Sources */,
 				F1F8407C211939ED0005C272 /* ViewController.m in Sources */,
 				F1F840CC21193B740005C272 /* XBButton.m in Sources */,
 				F1F840EF21193B810005C272 /* MASLayoutConstraint.m in Sources */,
@@ -447,9 +451,11 @@
 				F18C8D902119406900C980B8 /* XBAlertViewManager.m in Sources */,
 				F1F840BE21193A820005C272 /* UIView+AdaptKeyboard.m in Sources */,
 				F1F840EC21193B810005C272 /* ViewController+MASAdditions.m in Sources */,
+				F1041277221E6E6100733753 /* XBButton+CompatibleUIButton.m in Sources */,
 				F1F840ED21193B810005C272 /* MASCompositeConstraint.m in Sources */,
 				F1F840F021193B810005C272 /* NSArray+MASAdditions.m in Sources */,
 				F1F840F321193B810005C272 /* MASViewConstraint.m in Sources */,
+				F1041274221E6E3000733753 /* XBFloatMenuView.m in Sources */,
 				F18C8D8E2119406900C980B8 /* XBAlertViewBase.m in Sources */,
 				F1F840EE21193B810005C272 /* MASConstraintMaker.m in Sources */,
 				F1F84087211939ED0005C272 /* main.m in Sources */,

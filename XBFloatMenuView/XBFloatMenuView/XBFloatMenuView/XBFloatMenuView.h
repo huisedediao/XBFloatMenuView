@@ -24,4 +24,12 @@ typedef void (^XBFloatMenuViewClickBlock)(NSInteger index);
  */
 - (instancetype)initWithDisplayView:(id)displayView titleArr:(NSArray <NSString *>*)titleArr imgArr:(NSArray <UIImage *>*)imgArr width:(CGFloat)width spaceToTop:(CGFloat)spaceToTop spaceToRight:(CGFloat)spaceToRight;
 @property (nonatomic,copy) XBFloatMenuViewClickBlock bl_click;
+/**
+ 内容距离view边缘的左边距，默认5（乘以屏幕缩放比例）
+ */
+@property (nonatomic,assign) CGFloat f_contentLeftSpaceToBorder;
+/**
+ 图片和文字的间距，默认5（乘以屏幕缩放比例）
+ */
+@property (nonatomic,assign) CGFloat f_spaceOfImageAndTitle;
 @end

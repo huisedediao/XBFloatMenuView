@@ -16,12 +16,12 @@ typedef enum : NSUInteger {
 } XBBtnContentType;
 
 typedef enum : NSUInteger {
-    XBBtnSideCenter,
-    XBBtnSideLeft,
-    XBBtnSideRight,
-    XBBtnSideTop,
-    XBBtnSideBottom
-} XBBtnContentSide;
+    XBBtnAlignCenter,
+    XBBtnAlignLeft,
+    XBBtnAlignRight,
+    XBBtnAlignTop,
+    XBBtnAlignBottom
+} XBBtnContentAlign;
 
 @class XBButton;
 
@@ -31,41 +31,63 @@ typedef void(^XBActionBlock)(XBButton *weakBtn);
 
 @property (nonatomic,strong) UILabel *lb_title;
 @property (nonatomic,strong) UIImageView *imgv_image;
+@property (nonatomic,strong) UIImageView *imgv_background;
 
 /** 图片和文字排布样式 ，默认图片在左*/
 @property (nonatomic,assign) XBBtnContentType enum_contentType;
 
 /** 内容（图片和文字）是靠哪个方向对齐，上下左右，默认居中 */
-@property (nonatomic,assign) XBBtnContentSide enum_contentSide;
+@property (nonatomic,assign) XBBtnContentAlign enum_contentAlign;
+
+///文字的最大宽度
+@property (nonatomic,assign) CGFloat f_titleMaxWidth;
+
+///是否保持图片比例
+@property (nonatomic,assign) BOOL b_keepImageScale;
+///文字是否自动换行
+@property (nonatomic,assign) BOOL b_multiLine;
+///自适应内容宽高,默认自适应(只在XBBtnAlignCenter时生效)
+@property (nonatomic,assign) BOOL b_adaptContent;
+
+///自适应内容宽高时，内容距离边缘的距离，默认为0
+@property (nonatomic,assign) CGFloat f_spaceOfContentAndBorderForAdapt;
 
 /** 图片和文字的间距 */
 @property (nonatomic,assign) CGFloat f_spaceOfImageAndTitle;
 
 /** 内容（图片和文字）到对齐方向边缘的距离，内容在中间时不起作用 */
-@property (nonatomic,assign) CGFloat f_spaceToContentSide;
+@property (nonatomic,assign) CGFloat f_spaceOfContentAndBorderForAlign;
 
 @property (nonatomic,assign) CGSize size_image;
 
 @property (nonatomic,strong) UIImage *img_normal;
 @property (nonatomic,strong) UIImage *img_selected;
-@property (nonatomic,strong) UIImage *img_highlight;
+@property (nonatomic,strong) UIImage *img_highlighted;
+@property (nonatomic,strong) UIImage *img_disabled;
 
 @property (nonatomic,copy) NSString *str_titleNormal;
 @property (nonatomic,copy) NSString *str_titleSelected;
-@property (nonatomic,copy) NSString *str_titleHighlight;
+@property (nonatomic,copy) NSString *str_titleHighlighted;
+@property (nonatomic,copy) NSString *str_titleDisabled;
 
-@property (nonatomic,copy) NSMutableAttributedString *str_title_attributed;
+@property (nonatomic,copy) NSAttributedString *str_titleAttributedNormal;
+@property (nonatomic,copy) NSAttributedString *str_titleAttributedSelected;
+@property (nonatomic,copy) NSAttributedString *str_titleAttributedHighlighted;
+@property (nonatomic,copy) NSAttributedString *str_titleAttributedDisabled;
 
 @property (nonatomic,strong) UIColor *color_titleNormal;
 @property (nonatomic,strong) UIColor *color_titleSelected;
-@property (nonatomic,strong) UIColor *color_titleHighlight;
+@property (nonatomic,strong) UIColor *color_titleHighlighted;
+@property (nonatomic,strong) UIColor *color_titleDisabled;
 
 @property (nonatomic,strong) UIImage *img_backgroundNormal;
 @property (nonatomic,strong) UIImage *img_backgroundSelected;
-@property (nonatomic,strong) UIImage *img_backgroundHighlight;
+@property (nonatomic,strong) UIImage *img_backgroundHighlighted;
+@property (nonatomic,strong) UIImage *img_backgroundDisabled;
 
 @property (nonatomic,strong) UIColor *color_backgroundHighlight;
 @property (nonatomic,strong) UIColor *color_backgroundselected;
+@property (nonatomic,strong) UIColor *color_backgroundDisabled;
 
 @property (nonatomic,strong) UIFont *font_title;
 
